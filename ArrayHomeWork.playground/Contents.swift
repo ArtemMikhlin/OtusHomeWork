@@ -7,3 +7,8 @@ func revMinAndMaxNum(numbers:  [Int]) -> [Int] {
     numbers.swapAt(minIndex, maxIndex)
     return numbers
 }
+
+func repeatingSymbols(firstArray:  Set<String>, secondArray:  Set<String>) -> Set<String> {
+    let intersectionArray = firstArray.intersection(secondArray)
+    return intersectionArray
+}
