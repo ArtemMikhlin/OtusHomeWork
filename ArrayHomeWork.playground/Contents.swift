@@ -12,3 +12,13 @@ func repeatingSymbols(firstArray:  Set<String>, secondArray:  Set<String>) -> Se
     let intersectionArray = firstArray.intersection(secondArray)
     return intersectionArray
 }
+
+func longPasswords(credential: [String: String]) ->  [String: String] {
+    var longPasswordsDict: [String: String] = [:]
+    for (key, value) in credential{
+        if value.count > 10{
+            longPasswordsDict[key] = value
+        }
+    }
+    return longPasswordsDict
+}
