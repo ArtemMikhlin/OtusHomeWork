@@ -26,3 +26,9 @@ build/
 .#*
 *.swp
 *.un~
+*.xcuserstate
+StructHomework.playground/timeline.xctimeline
+StructHomework.playground/playground.xcworkspace/contents.xcworkspacedata
+StructHomework.playground/contents.xcplayground
+ArrayHomeWork.playground/playground.xcworkspace/xcuserdata/Mikhlin.xcuserdatad/UserInterfaceState.xcuserstate
+ArrayHomeWork.playground/playground.xcworkspace/xcuserdata/Mikhlin.xcuserdatad/UserInterfaceState.xcuserstate
