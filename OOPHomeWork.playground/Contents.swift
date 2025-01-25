@@ -78,25 +78,3 @@ class CarRacingSession: RacingSession {
         return super.sessionInfo() + ", Car class: \(carClass)"
     }
 }
-
-func displaySessionInfo(session: RacingSession) {
-    print(session.sessionInfo())
-}
-
-// Примеры использования
-let kartSession_1 = KartRacingSession(trackName: "Mayak", bestLapTime: 1.16, sessionTime: 10, weather: "Sun", number: 10, power: 9, tiresFresh: false)
-let kartSession_2 = KartRacingSession(trackName: "Mayak", bestLapTime: 1.20, sessionTime: 10, weather: "Sun", number: 10, power: 9, tiresFresh: false)
-let kartSession_3 = KartRacingSession(trackName: "Mayak", bestLapTime: 1.21, sessionTime: 10, weather: "Sun", number: 10, power: 9, tiresFresh: false)
-let carSession = CarRacingSession(trackName: "Moscow raceway", bestLapTime: 1.53, sessionTime: 10, weather: "Sun", carModel: "BMW M3 2014")
-
-let laps: [RacingSession.SessionInfo] = [
-    RacingSession.SessionInfo(trackName: "Mayak", bestLapTime: 1.16, sessionTime: 10, weather: "Sunny"),
-    RacingSession.SessionInfo(trackName: "Mayak", bestLapTime: 1.20, sessionTime: 10, weather: "Sunny"),
-    RacingSession.SessionInfo(trackName: "Mayak", bestLapTime: 1.21, sessionTime: 10, weather: "Sunny"),
-    RacingSession.SessionInfo(trackName: "Moscow raceway", bestLapTime: 1.53, sessionTime: 10, weather: "Sunny")
-]
-
-displaySessionInfo(session: kartSession_1)
-displaySessionInfo(session: carSession)
-kartSession_1.displayBestLapTime(from: laps)
-kartSession_2.displayBestLapTime(from: laps)
