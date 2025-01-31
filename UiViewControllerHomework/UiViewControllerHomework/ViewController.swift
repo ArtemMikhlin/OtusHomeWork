@@ -37,7 +37,7 @@ class ViewController: UIViewController {
     }
     @IBAction func CopyAddress(_ sender: Any) {
         UIPasteboard.general.string = address
-        let alert = UIAlertController(title: "Скопировано", message: "Адрес скопирован в буфер обмена.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Copied", message: "Address is copied", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
