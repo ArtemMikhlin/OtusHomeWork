@@ -20,31 +20,40 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var positionLabel: UILabel!
     
-    var fullName: String = "Ivan Kozlov"
-    var firstName: String = "Ivan"
+    
+    var user: User?
     var isFullNameDisplayed: Bool = true
-    var address: String = "Moscow"
-    var position: String = "Developer"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         imageView.image = UIImage(named: "defaultProfileImage")
-        nameLabel.text = fullName
         toggleButton.setTitle("Show only name", for: .normal)
-        positionLabel.text = position
-        addressLabel.text = address
+        
+        if let user = user {
+            nameLabel.text = user.fullName
+            positionLabel.text = user.position
+            addressLabel.text = user.address
+        }
     }
-    @IBAction func CopyAddress(_ sender: Any) {
-        UIPasteboard.general.string = address
+    
+    @IBAction func сopyAddress(_ sender: Any) {
+        guard let user = user else {
+              return
+          }
+        UIPasteboard.general.string = user.address
+
         let alert = UIAlertController(title: "Copied", message: "Address is copied", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
     @IBAction func toggleButton(_ sender: Any) {
+        guard let user = user else {
+            return
+        }
         isFullNameDisplayed.toggle()
-        nameLabel.text = isFullNameDisplayed ? fullName : firstName
+        nameLabel.text = isFullNameDisplayed ? user.fullName : user.firstName
         toggleButton.setTitle(isFullNameDisplayed ? "Show name" : "Show full name", for: .normal)
     }
 }
