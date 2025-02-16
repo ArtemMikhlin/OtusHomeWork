@@ -15,7 +15,6 @@
 		45B6D47D2D5E56770096147B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 45B6D47C2D5E56770096147B /* Base */; };
 		45B6D4882D5E56770096147B /* APIHomeworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B6D4872D5E56770096147B /* APIHomeworkTests.swift */; };
 		45B6D4922D5E56770096147B /* APIHomeworkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B6D4912D5E56770096147B /* APIHomeworkUITests.swift */; };
-		45B6D4942D5E56770096147B /* APIHomeworkUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B6D4932D5E56770096147B /* APIHomeworkUITestsLaunchTests.swift */; };
 		45B6D4A12D5E56900096147B /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B6D4A02D5E56900096147B /* Data.swift */; };
 		45B6D4A32D5E56C00096147B /* OpenWeatherApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B6D4A22D5E56C00096147B /* OpenWeatherApi.swift */; };
 		45B6D4A52D5E57C10096147B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B6D4A42D5E57C10096147B /* DataManager.swift */; };
@@ -51,7 +50,6 @@
 		45B6D4872D5E56770096147B /* APIHomeworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIHomeworkTests.swift; sourceTree = "<group>"; };
 		45B6D48D2D5E56770096147B /* APIHomeworkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APIHomeworkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45B6D4912D5E56770096147B /* APIHomeworkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIHomeworkUITests.swift; sourceTree = "<group>"; };
-		45B6D4932D5E56770096147B /* APIHomeworkUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIHomeworkUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		45B6D4A02D5E56900096147B /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		45B6D4A22D5E56C00096147B /* OpenWeatherApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherApi.swift; sourceTree = "<group>"; };
 		45B6D4A42D5E57C10096147B /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -131,7 +129,6 @@
 			isa = PBXGroup;
 			children = (
 				45B6D4912D5E56770096147B /* APIHomeworkUITests.swift */,
-				45B6D4932D5E56770096147B /* APIHomeworkUITestsLaunchTests.swift */,
 			);
 			path = APIHomeworkUITests;
 			sourceTree = "<group>";
@@ -289,7 +286,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				45B6D4922D5E56770096147B /* APIHomeworkUITests.swift in Sources */,
-				45B6D4942D5E56770096147B /* APIHomeworkUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
