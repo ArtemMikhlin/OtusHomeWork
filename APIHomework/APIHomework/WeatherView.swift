@@ -1,33 +1,30 @@
 import UIKit
 
 class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITableViewDataSource {
-    
-    // MARK: - Outlets
     @IBOutlet weak var districtPicker: UIPickerView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var humidityLabel: UILabel!
     @IBOutlet weak var rainLabel: UILabel!
     @IBOutlet weak var errorLabel: UILabel!
     @IBOutlet weak var forecastTableView: UITableView!
+    @IBOutlet weak var weatherImageView: UIImageView!
     @IBOutlet weak var datePicker: UIDatePicker!
     
-    // MARK: - Properties
     private let weatherAPI = WeatherAPI()
     private let weatherDataManager = WeatherDataManager()
     
     private let districts = [
-        "Mayak 1.0": (lat: 56.1008, lon: 37.3054),
-        "ЦТВС": (lat: 55.3914, lon: 37.4034),
-        "ADM": (lat: 55.5647, lon: 37.9896),
-        "Ижорец": (lat: 59.7594, lon: 30.6062),
-        "Сириус": (lat: 43.4009, lon: 39.9524),
-        "Max Motors Sochi": (lat: 43.6668, lon: 39.7605),
+        "Mayak 1.0": (lat: 56.1008, lon: 37.3054, imageURL: "https://kudamoscow.ru/uploads/46953de5d570138e2179cf7deefbee31.jpg"),
+        "ЦТВС": (lat: 55.3914, lon: 37.4034, imageURL: "https://avatars.mds.yandex.net/get-altay/2356223/2a0000017328e3fc4533f2b5308ff71ae238/L_height"),
+        "ADM": (lat: 55.5647, lon: 37.9896, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDwmkv6e9SEjZ8ccm7Sx4RDsjtO7Nuah1Cdg&s"),
+        "Ижорец": (lat: 59.7594, lon: 30.6062, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoUQO6gWvSeAxdclDL-wIDjI4VNGksYOLh7A&s"),
+        "Сириус": (lat: 43.4009, lon: 39.9524, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB4yXPRr1G7onxUXrsuxCSmFCWuyeAZnnHgQ&s"),
+        "Max Motors Sochi": (lat: 43.6668, lon: 39.7605, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgmTI_QLF2cYBHgsJxzjV9tbmTdSPM9n8Q3g&s"),
     ]
     
     private var selectedDistrict: String = "ЦТВС"
     private var forecastData: [Forecast] = []
     
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,8 +36,7 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
         forecastTableView.dataSource = self
         forecastTableView.register(UITableViewCell.self, forCellReuseIdentifier: "ForecastCell")
         
-        // Настройка DatePicker 
-        // (Отображаеся ошибка так как исторические данные досупны ток в платной версии)
+        // Настройка DatePicker
         datePicker.maximumDate = Date()
         datePicker.datePickerMode = .dateAndTime
         
@@ -49,10 +45,16 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
             districtPicker.selectRow(initialIndex, inComponent: 0, animated: false)
         }
         
+        // Загрузка изображения для начальной локации
+        if let imageURL = districts[selectedDistrict]?.imageURL {
+            ImageLoader.shared.loadImage(from: imageURL) { [weak self] image in
+                self?.weatherImageView.image = image
+            }
+        }
+        
         fetchWeather()
     }
     
-    // MARK: - Actions
     @IBAction func fetchWeatherButtonTapped(_ sender: UIButton) {
         fetchWeather()
     }
@@ -72,6 +74,18 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedDistrict = Array(districts.keys)[row]
+        
+        // Загрузка изображения для выбранной локации
+        if let imageURL = districts[selectedDistrict]?.imageURL {
+            ImageLoader.shared.loadImage(from: imageURL) { [weak self] image in
+                self?.weatherImageView.image = image
+            }
+        } else {
+            weatherImageView.image = nil
+        }
+        
+        // Обновляем данные прогноза
+        fetchWeather()
     }
     
     // MARK: - UITableViewDataSource
@@ -92,7 +106,6 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
         // Форматируем данные о погоде
         let temp = String(format: "%.1f°C", forecast.main.temp)
         let description = forecast.weather.first?.description ?? "No data received"
-        let rain = forecast.rain?.last3Hours ?? 0
         
         cell.textLabel?.text = "\(dateString): \(temp), \(description)"
         return cell
@@ -108,23 +121,19 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
         let selectedDate = datePicker.date
         let timestamp = Int(selectedDate.timeIntervalSince1970)
         
-        // Проверяем, выбрана ли текущая дата или дата в прошлом
         if Calendar.current.isDateInToday(selectedDate) {
-            // Получаем текущую погоду
             weatherAPI.fetchCurrentWeather(lat: coordinates.lat, lon: coordinates.lon) { result in
                 DispatchQueue.main.async {
                     self.handleCurrentWeatherResult(result)
                 }
             }
             
-            // Получаем прогноз на 3 дня
             weatherAPI.fetch3DayForecast(lat: coordinates.lat, lon: coordinates.lon) { result in
                 DispatchQueue.main.async {
                     self.handleForecastResult(result)
                 }
             }
         } else {
-            // Получаем исторические данные
             weatherAPI.fetchHistoricalWeather(lat: coordinates.lat, lon: coordinates.lon, timestamp: timestamp) { result in
                 DispatchQueue.main.async {
                     self.handleCurrentWeatherResult(result)
@@ -149,7 +158,7 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
             self.weatherDataManager.saveWeatherData(weatherData)
         case .failure(let error):
             self.errorLabel.text = "Error: \(error.localizedDescription)"
-            self.errorLabel.numberOfLines = 0 // Разрешаем несколько строк
+            self.errorLabel.numberOfLines = 0
             self.errorLabel.lineBreakMode = .byWordWrapping
             self.temperatureLabel.text = ""
             self.humidityLabel.text = ""
