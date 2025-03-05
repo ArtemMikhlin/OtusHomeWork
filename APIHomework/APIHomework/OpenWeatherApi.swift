@@ -1,10 +1,15 @@
 import Foundation
 
 class WeatherAPI {
-    private let apiKey = "12fd0b09d6e27ccc173aba46c4317933"
-    private let baseURL = "https://api.openweathermap.org/data/2.5"
+    private let apiKey: String
+    private let baseURL: String
     
-    // Общий метод для выполнения запроса
+    init(apiKey: String, baseURL: String) {
+        self.apiKey = apiKey
+        self.baseURL = baseURL
+    }
+    
+    // Общий метод
     private func performRequest<T: Decodable>(urlString: String, completion: @escaping (Result<T, Error>) -> Void) {
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -31,19 +36,17 @@ class WeatherAPI {
         }.resume()
     }
     
-    // Метод для получения текущей погоды
     func fetchCurrentWeather(lat: Double, lon: Double, completion: @escaping (Result<WeatherData, Error>) -> Void) {
         let urlString = "\(baseURL)/weather?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric"
         performRequest(urlString: urlString, completion: completion)
     }
     
-    // Метод для получения прогноза на 3 дня
     func fetch3DayForecast(lat: Double, lon: Double, completion: @escaping (Result<[Forecast], Error>) -> Void) {
         let urlString = "\(baseURL)/forecast?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric"
         performRequest(urlString: urlString) { (result: Result<ForecastResponse, Error>) in
             switch result {
             case .success(let forecastResponse):
-                // Фильтр, чтобы оставить только прогноз на 3 дня
+                // Фильтр, прогноз на 3 дня
                 let threeDayForecast = Array(forecastResponse.list.prefix(24)) // 24 элемента = 3 дня (8 элементов в день)
                 completion(.success(threeDayForecast))
             case .failure(let error):
@@ -52,7 +55,7 @@ class WeatherAPI {
         }
     }
     
-    // Метод для получения исторических данных о погоде за последние 5 дней
+
     func fetchHistoricalWeather(lat: Double, lon: Double, timestamp: Int, completion: @escaping (Result<WeatherData, Error>) -> Void) {
         let currentDate = Date()
         let selectedDate = Date(timeIntervalSince1970: TimeInterval(timestamp))
@@ -64,12 +67,11 @@ class WeatherAPI {
             return
         }
         
-        // Формируем URL для запроса исторических данных
         let urlString = "\(baseURL)/onecall/timemachine?lat=\(lat)&lon=\(lon)&dt=\(timestamp)&appid=\(apiKey)&units=metric"
         performRequest(urlString: urlString, completion: completion)
     }
     
-    struct ForecastResponse: Codable {
+    struct ForecastResponse: Decodable {
         let list: [Forecast]
     }
 }
