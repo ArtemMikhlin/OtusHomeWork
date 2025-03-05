@@ -9,73 +9,86 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
     @IBOutlet weak var forecastTableView: UITableView!
     @IBOutlet weak var weatherImageView: UIImageView!
     @IBOutlet weak var datePicker: UIDatePicker!
-    
-    private let weatherAPI = WeatherAPI()
-    private let weatherDataManager = WeatherDataManager()
-    
-    private let districts = [
-        "Mayak 1.0": (lat: 56.1008, lon: 37.3054, imageURL: "https://kudamoscow.ru/uploads/46953de5d570138e2179cf7deefbee31.jpg"),
-        "ЦТВС": (lat: 55.3914, lon: 37.4034, imageURL: "https://avatars.mds.yandex.net/get-altay/2356223/2a0000017328e3fc4533f2b5308ff71ae238/L_height"),
-        "ADM": (lat: 55.5647, lon: 37.9896, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDwmkv6e9SEjZ8ccm7Sx4RDsjtO7Nuah1Cdg&s"),
-        "Ижорец": (lat: 59.7594, lon: 30.6062, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoUQO6gWvSeAxdclDL-wIDjI4VNGksYOLh7A&s"),
-        "Сириус": (lat: 43.4009, lon: 39.9524, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB4yXPRr1G7onxUXrsuxCSmFCWuyeAZnnHgQ&s"),
-        "Max Motors Sochi": (lat: 43.6668, lon: 39.7605, imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgmTI_QLF2cYBHgsJxzjV9tbmTdSPM9n8Q3g&s"),
-    ]
-    
+
+    // Dependencies
+    var weatherAPI: WeatherAPI!
+    var weatherDataManager: WeatherDataManager!
+    var districts: [String: (lat: Double, lon: Double, imageURL: String)]!
+
+    // Selected location
     private var selectedDistrict: String = "ЦТВС"
     private var forecastData: [Forecast] = []
-    
+
+    // MARK: - Initialization
+
+    // Initializer for Storyboard
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        print("WeatherView initialized via Storyboard")
+    }
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Настройка PickerView
+        print("viewDidLoad called")
+
+        // Check if dependencies are set
+        guard weatherAPI != nil, weatherDataManager != nil, districts != nil else {
+            fatalError("Dependencies not set! Set dependencies before using WeatherView.")
+        }
+
+        // Setup PickerView
         districtPicker.dataSource = self
         districtPicker.delegate = self
-        
-        // Настройка TableView
+
+        // Setup TableView
         forecastTableView.dataSource = self
         forecastTableView.register(UITableViewCell.self, forCellReuseIdentifier: "ForecastCell")
-        
-        // Настройка DatePicker
+
+        // Setup DatePicker
         datePicker.maximumDate = Date()
         datePicker.datePickerMode = .dateAndTime
-        
-        // Загрузка начальных данных
+
+        // Load initial data
         if let initialIndex = Array(districts.keys).firstIndex(of: selectedDistrict) {
             districtPicker.selectRow(initialIndex, inComponent: 0, animated: false)
         }
-        
-        // Загрузка изображения для начальной локации
+
+        // Load image for the initial location
         if let imageURL = districts[selectedDistrict]?.imageURL {
             ImageLoader.shared.loadImage(from: imageURL) { [weak self] image in
                 self?.weatherImageView.image = image
             }
         }
-        
+
         fetchWeather()
     }
-    
+
+    // MARK: - Actions
+
     @IBAction func fetchWeatherButtonTapped(_ sender: UIButton) {
         fetchWeather()
     }
-    
+
     // MARK: - UIPickerViewDataSource
+
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return districts.count
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return Array(districts.keys)[row]
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedDistrict = Array(districts.keys)[row]
-        
-        // Загрузка изображения для выбранной локации
+
+        // Load image for the selected location
         if let imageURL = districts[selectedDistrict]?.imageURL {
             ImageLoader.shared.loadImage(from: imageURL) { [weak self] image in
                 self?.weatherImageView.image = image
@@ -83,51 +96,53 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
         } else {
             weatherImageView.image = nil
         }
-        
-        // Обновляем данные прогноза
+
+        // Update forecast data
         fetchWeather()
     }
-    
+
     // MARK: - UITableViewDataSource
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return forecastData.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForecastCell", for: indexPath)
         let forecast = forecastData[indexPath.row]
-        
-        // Форматируем дату
+
+        // Format date
         let date = Date(timeIntervalSince1970: TimeInterval(forecast.dt))
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM|HH:mm"
         let dateString = dateFormatter.string(from: date)
-        
-        // Форматируем данные о погоде
+
+        // Format weather data
         let temp = String(format: "%.1f°C", forecast.main.temp)
         let description = forecast.weather.first?.description ?? "No data received"
-        
+
         cell.textLabel?.text = "\(dateString): \(temp), \(description)"
         return cell
     }
-    
+
     // MARK: - Private Methods
+
     private func fetchWeather() {
         guard let coordinates = districts[selectedDistrict] else {
             errorLabel.text = "District not found"
             return
         }
-        
+
         let selectedDate = datePicker.date
         let timestamp = Int(selectedDate.timeIntervalSince1970)
-        
+
         if Calendar.current.isDateInToday(selectedDate) {
             weatherAPI.fetchCurrentWeather(lat: coordinates.lat, lon: coordinates.lon) { result in
                 DispatchQueue.main.async {
                     self.handleCurrentWeatherResult(result)
                 }
             }
-            
+
             weatherAPI.fetch3DayForecast(lat: coordinates.lat, lon: coordinates.lon) { result in
                 DispatchQueue.main.async {
                     self.handleForecastResult(result)
@@ -141,21 +156,29 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
             }
         }
     }
-    
+
     private func handleCurrentWeatherResult(_ result: Result<WeatherData, Error>) {
         switch result {
         case .success(let weatherData):
             self.temperatureLabel.text = String(format: "Temperature: %.1f°C", weatherData.main.temp)
             self.humidityLabel.text = "Humidity: \(weatherData.main.humidity)%"
-            
+
             if let rain = weatherData.rain?.lastHour {
                 self.rainLabel.text = self.getRainDescription(rain: rain)
             } else {
                 self.rainLabel.text = "Precipitation: No"
             }
-            
+
             self.errorLabel.text = ""
-            self.weatherDataManager.saveWeatherData(weatherData)
+
+            // Save data with error handling
+            do {
+                try self.weatherDataManager.saveWeatherData(weatherData)
+                print("Weather data saved successfully.")
+            } catch {
+                print("Failed to save weather data: \(error.localizedDescription)")
+            }
+
         case .failure(let error):
             self.errorLabel.text = "Error: \(error.localizedDescription)"
             self.errorLabel.numberOfLines = 0
@@ -165,7 +188,7 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
             self.rainLabel.text = ""
         }
     }
-    
+
     private func handleForecastResult(_ result: Result<[Forecast], Error>) {
         switch result {
         case .success(let forecast):
@@ -175,7 +198,7 @@ class WeatherView: UIViewController, UIPickerViewDataSource, UIPickerViewDelegat
             self.errorLabel.text = "Error getting forecast: \(error.localizedDescription)"
         }
     }
-    
+
     private func getRainDescription(rain: Double) -> String {
         switch rain {
         case 0:
