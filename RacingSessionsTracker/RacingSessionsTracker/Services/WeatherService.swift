@@ -4,14 +4,12 @@ class WeatherService {
     private let apiKey = "12fd0b09d6e27ccc173aba46c4317933"
     
     func fetchWeather(latitude: Double, longitude: Double, completion: @escaping (WeatherData?) -> Void) {
-        var components = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather")
-        components?.queryItems = [
-            URLQueryItem(name: "lat", value: "\(latitude)"),
-            URLQueryItem(name: "lon", value: "\(longitude)"),
-            URLQueryItem(name: "appid", value: apiKey),
-            URLQueryItem(name: "units", value: "metric")
-        ]
-        guard let url = components?.url else { return }
+        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)&units=metric"
+        
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
@@ -31,11 +29,6 @@ class WeatherService {
 struct WeatherData: Codable {
     let main: Main
     let weather: [WeatherInfo]
-    
-    enum CodingKeys: String, CodingKey {
-        case main
-        case weather
-    }
 }
 
 struct Main: Codable {
