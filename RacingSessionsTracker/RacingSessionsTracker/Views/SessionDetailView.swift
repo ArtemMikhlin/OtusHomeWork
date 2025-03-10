@@ -2,7 +2,14 @@ import SwiftUI
 
 struct SessionDetailView: View {
     let session: Session
-    @StateObject private var viewModel = SessionViewModel()
+    @ObservedObject private var viewModel = SessionViewModel()
+    
+    var totalSessionTime: String {
+        let totalSeconds = viewModel.getLapTimes(for: session).reduce(0) { $0 + $1.time }
+        let minutes = Int(totalSeconds) / 60
+        let seconds = Int(totalSeconds) % 60
+        return "\(minutes) мин \(seconds) сек"
+    }
     
     var body: some View {
         List {
@@ -10,6 +17,7 @@ struct SessionDetailView: View {
                 Text("Трек: \(session.track.name)")
                 Text("Автомобиль: \(session.car.model)")
                 Text("Мощность: \(session.car.horsepower) л/с")
+                Text("Дата: \(session.date.formatted(date: .abbreviated, time: .shortened))")
                 Text("Погода: \(session.weather.descriptionText)")
                 Text("Температура: \(session.weather.temperature, specifier: "%.1f")°C")
                 Text("Влажность: \(session.weather.humidity, specifier: "%.1f")%")
@@ -19,6 +27,7 @@ struct SessionDetailView: View {
                 ForEach(Array(viewModel.getLapTimes(for: session)), id: \.id) { lapTime in
                     Text("\(lapTime.time, specifier: "%.2f") сек")
                 }
+                Text("Общее время: \(totalSessionTime)")
             }
             
             Section(header: Text("Медиа")) {

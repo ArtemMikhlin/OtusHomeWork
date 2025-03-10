@@ -64,9 +64,14 @@ extension Weather {
 
 // MARK: - LapTime Entity
 @objc(LapTime)
-public class LapTime: NSManagedObject, Identifiable {
+public class LapTime: NSManagedObject, Identifiable, Comparable {
     @NSManaged public var id: UUID
     @NSManaged public var time: Double
+
+    // Реализация протокола Comparable
+    public static func < (lhs: LapTime, rhs: LapTime) -> Bool {
+        return lhs.time < rhs.time
+    }
 }
 
 extension LapTime {

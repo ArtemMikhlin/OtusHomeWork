@@ -21,7 +21,7 @@
 		450D76CB2D7C6A0900934FF5 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76CA2D7C6A0900934FF5 /* PersistenceController.swift */; };
 		450D76CD2D7C6A3D00934FF5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76CC2D7C6A3D00934FF5 /* ContentView.swift */; };
 		450D76D02D7C788000934FF5 /* TrackData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76CF2D7C788000934FF5 /* TrackData.swift */; };
-		450D76D22D7C7A5A00934FF5 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76D12D7C7A5A00934FF5 /* SideMenuView.swift */; };
+		450D76D42D7F939C00934FF5 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76D32D7F939C00934FF5 /* MediaPicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +40,7 @@
 		450D76CA2D7C6A0900934FF5 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		450D76CC2D7C6A3D00934FF5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		450D76CF2D7C788000934FF5 /* TrackData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackData.swift; sourceTree = "<group>"; };
-		450D76D12D7C7A5A00934FF5 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
+		450D76D32D7F939C00934FF5 /* MediaPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				450D76C02D7B3ECC00934FF5 /* CoreDataManager.swift */,
+				450D76D32D7F939C00934FF5 /* MediaPicker.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -135,7 +136,6 @@
 				450D76C62D7C67DF00934FF5 /* AddSessionView.swift */,
 				450D76C82D7C680200934FF5 /* MediaView.swift */,
 				450D76CC2D7C6A3D00934FF5 /* ContentView.swift */,
-				450D76D12D7C7A5A00934FF5 /* SideMenuView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -213,11 +213,11 @@
 				450D75932D79EB1D00934FF5 /* SessionViewModel.swift in Sources */,
 				450D76CD2D7C6A3D00934FF5 /* ContentView.swift in Sources */,
 				450D76C52D7C67C400934FF5 /* SessionDetailView.swift in Sources */,
-				450D76D22D7C7A5A00934FF5 /* SideMenuView.swift in Sources */,
 				450D76C72D7C67DF00934FF5 /* AddSessionView.swift in Sources */,
 				450D76C32D7C67A000934FF5 /* SessionListView.swift in Sources */,
 				450D74E92D79E1D100934FF5 /* RacingSessionsTrackerApp.swift in Sources */,
 				450D76BF2D7B3C4700934FF5 /* RacingSessionsModel.swift in Sources */,
+				450D76D42D7F939C00934FF5 /* MediaPicker.swift in Sources */,
 				450D76C92D7C680200934FF5 /* MediaView.swift in Sources */,
 				450D76C12D7B3ECC00934FF5 /* CoreDataManager.swift in Sources */,
 				450D76D02D7C788000934FF5 /* TrackData.swift in Sources */,

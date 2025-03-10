@@ -11,6 +11,7 @@ struct AddSessionView: View {
     @State private var weatherData: WeatherData? = nil
     @State private var isLoading = false
     @State private var errorMessage: String? = nil
+    @State private var sessionDate = Date() // Добавляем поле для даты и времени
     
     var body: some View {
         Form {
@@ -37,6 +38,10 @@ struct AddSessionView: View {
                 TextField("Модель автомобиля", text: $carModel)
                 TextField("Мощность (л/с)", text: $horsepower)
                     .keyboardType(.numberPad)
+            }
+            
+            Section(header: Text("Дата и время сессии")) {
+                DatePicker("Дата и время", selection: $sessionDate, displayedComponents: [.date, .hourAndMinute])
             }
             
             Section(header: Text("Время кругов")) {
@@ -124,7 +129,7 @@ struct AddSessionView: View {
         
         let session = Session(context: viewContext)
         session.id = UUID()
-        session.date = Date()
+        session.date = sessionDate // Сохраняем дату и время
         session.track = track
         session.car = car
         session.weather = weather

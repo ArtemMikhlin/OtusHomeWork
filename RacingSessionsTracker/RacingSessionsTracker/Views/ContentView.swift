@@ -24,21 +24,6 @@ struct ContentView: View {
                         }
                     }
                 
-                // Боковое меню
-                if isMenuOpen {
-                    Color.black.opacity(0.3)
-                        .edgesIgnoringSafeArea(.all)
-                        .onTapGesture {
-                            withAnimation {
-                                isMenuOpen.toggle()
-                            }
-                        }
-                    
-                    SideMenuView(navigationPath: $navigationPath, isMenuOpen: $isMenuOpen)
-                        .frame(width: UIScreen.main.bounds.width * 0.7)
-                        .transition(.move(edge: .leading))
-                        .background(Color.white)
-                }
             }
             .navigationDestination(for: String.self) { destination in
                 switch destination {
