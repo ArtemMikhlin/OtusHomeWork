@@ -22,6 +22,7 @@
 		450D76CD2D7C6A3D00934FF5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76CC2D7C6A3D00934FF5 /* ContentView.swift */; };
 		450D76D02D7C788000934FF5 /* TrackData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76CF2D7C788000934FF5 /* TrackData.swift */; };
 		450D76E02D80ADC400934FF5 /* TimePickerVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450D76DF2D80ADC400934FF5 /* TimePickerVIew.swift */; };
+		450D76E52D80CCF400934FF5 /* info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 450D76E42D80CCF400934FF5 /* info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		450D76CC2D7C6A3D00934FF5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		450D76CF2D7C788000934FF5 /* TrackData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackData.swift; sourceTree = "<group>"; };
 		450D76DF2D80ADC400934FF5 /* TimePickerVIew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerVIew.swift; sourceTree = "<group>"; };
+		450D76E42D80CCF400934FF5 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,15 +75,16 @@
 		450D74E72D79E1D100934FF5 /* RacingSessionsTracker */ = {
 			isa = PBXGroup;
 			children = (
+				450D76E62D80CE6E00934FF5 /* Data */,
 				450D76CE2D7C6A6C00934FF5 /* Views */,
 				450D76B92D7B3AF600934FF5 /* Models */,
 				450D75912D79EB0100934FF5 /* ViewModels */,
 				450D758F2D79EAE000934FF5 /* Services */,
 				450D758E2D79EAC000934FF5 /* Utilities */,
 				450D74E82D79E1D100934FF5 /* RacingSessionsTrackerApp.swift */,
+				450D76E42D80CCF400934FF5 /* info.plist */,
 				450D74EC2D79E1D200934FF5 /* Assets.xcassets */,
 				450D74EE2D79E1D200934FF5 /* Preview Content */,
-				450D76CF2D7C788000934FF5 /* TrackData.swift */,
 			);
 			path = RacingSessionsTracker;
 			sourceTree = "<group>";
@@ -138,6 +141,14 @@
 				450D76CC2D7C6A3D00934FF5 /* ContentView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		450D76E62D80CE6E00934FF5 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				450D76CF2D7C788000934FF5 /* TrackData.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -200,6 +211,7 @@
 			files = (
 				450D74F02D79E1D200934FF5 /* Preview Assets.xcassets in Resources */,
 				450D74ED2D79E1D200934FF5 /* Assets.xcassets in Resources */,
+				450D76E52D80CCF400934FF5 /* info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +368,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RacingSessionsTracker/Preview Content\"";
+				DEVELOPMENT_TEAM = S3BS3C28FS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -384,6 +397,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RacingSessionsTracker/Preview Content\"";
+				DEVELOPMENT_TEAM = S3BS3C28FS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

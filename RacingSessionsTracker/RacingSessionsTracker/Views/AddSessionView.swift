@@ -88,8 +88,6 @@ struct AddSessionView: View {
                     Text("Описание: \(weatherData.weather.first?.description ?? "Нет данных")")
                 } else if let errorMessage = errorMessage {
                     Text(errorMessage).foregroundColor(.red)
-                } else {
-                    Text("Нажмите 'Получить погоду'")
                 }
                 
                 Button("Получить погоду") {
@@ -121,15 +119,18 @@ struct AddSessionView: View {
         isLoading = true
         errorMessage = nil
         
-        WeatherService().fetchWeather(latitude: selectedTrack.latitude, longitude: selectedTrack.longitude) { weatherData in
+        WeatherService().fetchWeather(latitude: selectedTrack.latitude, longitude: selectedTrack.longitude) { result in
             isLoading = false
-            if let weatherData = weatherData {
+            
+            switch result {
+            case .success(let weatherData):
                 self.weatherData = weatherData
-            } else {
-                errorMessage = "Не удалось получить данные о погоде"
+            case .failure(let error):
+                self.errorMessage = "Ошибка: \(error.localizedDescription)"
             }
         }
     }
+
     
     private func saveSession() {
         guard let selectedTrack = selectedTrack,
