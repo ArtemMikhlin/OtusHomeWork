@@ -1,16 +1,13 @@
 import SwiftUI
 
 struct AddSessionView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var viewModel: SessionViewModel // Используем EnvironmentObject
     
     @State private var selectedTrack: TrackData? = nil
     @State private var carModel = ""
     @State private var horsepower = ""
     @State private var lapTimes: [Double] = []
-    @State private var weatherData: WeatherData? = nil
-    @State private var isLoading = false
-    @State private var errorMessage: String? = nil
     @State private var sessionDate = Date()
     
     // Для кастомного пикера
@@ -58,7 +55,7 @@ struct AddSessionView: View {
                     HStack {
                         Text("Круг \(index + 1):")
                         Spacer()
-                        Text("\(formatTime(lapTimes[index]))")
+                        Text("\(viewModel.formatTime(lapTimes[index]))")
                     }
                 }
                 
@@ -80,105 +77,51 @@ struct AddSessionView: View {
             }
             
             Section(header: Text("Погода")) {
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView()
-                } else if let weatherData = weatherData {
+                } else if let weatherData = viewModel.weatherData {
                     Text("Температура: \(weatherData.main.temp, specifier: "%.1f")°C")
                     Text("Влажность: \(weatherData.main.humidity, specifier: "%.1f")%")
                     Text("Описание: \(weatherData.weather.first?.description ?? "Нет данных")")
-                } else if let errorMessage = errorMessage {
+                } else if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage).foregroundColor(.red)
                 }
                 
                 Button("Получить погоду") {
-                    fetchWeather()
+                    if let selectedTrack = selectedTrack {
+                        viewModel.fetchWeather(latitude: selectedTrack.latitude, longitude: selectedTrack.longitude) { result in
+                            switch result {
+                            case .success(let weatherData):
+                                self.viewModel.weatherData = weatherData
+                            case .failure(let error):
+                                self.viewModel.errorMessage = "Ошибка: \(error.localizedDescription)"
+                            }
+                        }
+                    }
                 }
-                .disabled(selectedTrack == nil || isLoading)
+                .disabled(selectedTrack == nil || viewModel.isLoading)
             }
             
             Section {
                 Button("Сохранить сессию") {
-                    saveSession()
+                    if let selectedTrack = selectedTrack,
+                       let weatherData = viewModel.weatherData {
+                        let success = viewModel.saveSession(
+                            track: selectedTrack,
+                            carModel: carModel,
+                            horsepower: horsepower,
+                            sessionDate: sessionDate,
+                            lapTimes: lapTimes,
+                            weatherData: weatherData
+                        )
+                        if success {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
                 }
-                .disabled(selectedTrack == nil || carModel.isEmpty || horsepower.isEmpty || weatherData == nil || lapTimes.isEmpty)
+                .disabled(selectedTrack == nil || carModel.isEmpty || horsepower.isEmpty || viewModel.weatherData == nil || lapTimes.isEmpty)
             }
         }
         .navigationTitle("Новая сессия")
-    }
-    
-    // Форматирование времени в минуты и секунды
-    private func formatTime(_ time: Double) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-    
-    private func fetchWeather() {
-        guard let selectedTrack = selectedTrack else { return }
-        
-        isLoading = true
-        errorMessage = nil
-        
-        WeatherService().fetchWeather(latitude: selectedTrack.latitude, longitude: selectedTrack.longitude) { result in
-            isLoading = false
-            
-            switch result {
-            case .success(let weatherData):
-                self.weatherData = weatherData
-            case .failure(let error):
-                self.errorMessage = "Ошибка: \(error.localizedDescription)"
-            }
-        }
-    }
-
-    
-    private func saveSession() {
-        guard let selectedTrack = selectedTrack,
-              let weatherData = weatherData else { return }
-        
-        // Проверяем, что все круги имеют ненулевое время
-        guard !lapTimes.isEmpty, lapTimes.allSatisfy({ $0 > 0 }) else {
-            errorMessage = "Время кругов не может быть пустым или нулевым"
-            return
-        }
-        
-        let track = Track(context: viewContext)
-        track.id = UUID()
-        track.name = selectedTrack.name
-        track.latitude = selectedTrack.latitude
-        track.longitude = selectedTrack.longitude
-        
-        let car = Car(context: viewContext)
-        car.id = UUID()
-        car.model = carModel
-        car.horsepower = Int16(horsepower) ?? 0
-        
-        let weather = Weather(context: viewContext)
-        weather.id = UUID()
-        weather.temperature = weatherData.main.temp
-        weather.humidity = Double(weatherData.main.humidity)
-        weather.descriptionText = weatherData.weather.first?.description ?? "Нет данных"
-        
-        let lapTimeObjects = lapTimes.map { lapTime in
-            let lapTimeObject = LapTime(context: viewContext)
-            lapTimeObject.id = UUID()
-            lapTimeObject.time = lapTime
-            return lapTimeObject
-        }
-        
-        let session = Session(context: viewContext)
-        session.id = UUID()
-        session.date = sessionDate
-        session.track = track
-        session.car = car
-        session.weather = weather
-        session.lapTimes = NSSet(array: lapTimeObjects)
-        
-        do {
-            try viewContext.save()
-            presentationMode.wrappedValue.dismiss()
-        } catch {
-            print("Ошибка при сохранении сессии: \(error)")
-        }
     }
 }

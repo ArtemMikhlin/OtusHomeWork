@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SessionDetailView: View {
     let session: Session
-    @ObservedObject private var viewModel = SessionViewModel()
+    @EnvironmentObject private var viewModel: SessionViewModel
     
     var totalSessionTime: String {
         let totalSeconds = viewModel.getLapTimes(for: session).reduce(0) { $0 + $1.time }
