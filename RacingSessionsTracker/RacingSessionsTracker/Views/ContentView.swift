@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var isMenuOpen = false
-    @State private var navigationPath = NavigationPath() // Для управления навигацией
+    @State private var navigationPath = NavigationPath()
     
     var body: some View {
         NavigationStack(path: $navigationPath) {

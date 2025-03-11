@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SessionListView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var viewModel: SessionViewModel // Используем EnvironmentObject
+    @EnvironmentObject private var viewModel: SessionViewModel
     
     var body: some View {
         NavigationView {
@@ -10,7 +10,7 @@ struct SessionListView: View {
                 .navigationTitle("Сессии")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: AddSessionView()) { // Убрали передачу viewModel
+                        NavigationLink(destination: AddSessionView()) {
                             Image(systemName: "plus")
                         }
                     }
@@ -38,7 +38,7 @@ struct SessionListView: View {
 
     // Отображение строки сессии
     private func sessionRow(session: Session) -> some View {
-        NavigationLink(destination: SessionDetailView(session: session)) { // Убрали передачу viewModel
+        NavigationLink(destination: SessionDetailView(session: session)) {
             VStack(alignment: .leading) {
                 Text("Трек: \(session.track.name)")
                 Text("Автомобиль: \(session.car.model)")

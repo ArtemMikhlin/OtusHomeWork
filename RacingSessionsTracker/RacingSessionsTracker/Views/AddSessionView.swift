@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AddSessionView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject private var viewModel: SessionViewModel // Используем EnvironmentObject
+    @EnvironmentObject private var viewModel: SessionViewModel
     
     @State private var selectedTrack: TrackData? = nil
     @State private var carModel = ""
@@ -14,6 +14,9 @@ struct AddSessionView: View {
     @State private var isAddingLapTime = false
     @State private var currentLapMinutes = 0
     @State private var currentLapSeconds = 0
+    
+    // Для отображения ошибки
+    @State private var lapTimeError: String? = nil
     
     var body: some View {
         Form {
@@ -62,16 +65,30 @@ struct AddSessionView: View {
                 if isAddingLapTime {
                     TimePickerView(minutes: $currentLapMinutes, seconds: $currentLapSeconds)
                     
+                    if let lapTimeError = lapTimeError {
+                        Text(lapTimeError)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                    }
+                    
                     Button("Сохранить круг") {
                         let lapTime = Double(currentLapMinutes * 60 + currentLapSeconds)
-                        lapTimes.append(lapTime)
-                        isAddingLapTime = false
-                        currentLapMinutes = 0
-                        currentLapSeconds = 0
+                        
+                        // Проверяем, что время круга не равно нулю
+                        if lapTime > 0 {
+                            lapTimes.append(lapTime)
+                            isAddingLapTime = false
+                            currentLapMinutes = 0
+                            currentLapSeconds = 0
+                            lapTimeError = nil
+                        } else {
+                            lapTimeError = "Введите время круга"
+                        }
                     }
                 } else {
                     Button("Добавить круг") {
                         isAddingLapTime = true
+                        lapTimeError = nil // Сбрасываем ошибку при открытии пикера
                     }
                 }
             }

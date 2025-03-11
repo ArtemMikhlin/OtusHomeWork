@@ -42,11 +42,6 @@ class SessionViewModel: ObservableObject {
         lapTimes: [Double],
         weatherData: WeatherData
     ) -> Bool {
-        // Проверяем, что все круги имеют ненулевое время
-        guard !lapTimes.isEmpty, lapTimes.allSatisfy({ $0 > 0 }) else {
-            errorMessage = "Время кругов не может быть пустым или нулевым"
-            return false
-        }
         
         let trackEntity = Track(context: context)
         trackEntity.id = UUID()

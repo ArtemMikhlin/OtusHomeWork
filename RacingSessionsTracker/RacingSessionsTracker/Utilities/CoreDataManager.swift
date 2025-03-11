@@ -6,7 +6,6 @@ class CoreDataManager {
     private init() {}
     
     lazy var persistentContainer: NSPersistentContainer = {
-        // Создаем модель вручную
         let model = NSManagedObjectModel()
         
         // Описание сущностей
@@ -178,7 +177,6 @@ class CoreDataManager {
         // Установка сущностей в модель
         model.entities = [sessionEntity, trackEntity, carEntity, weatherEntity, lapTimeEntity, mediaEntity]
         
-        // Создаем контейнер с нашей моделью
         let container = NSPersistentContainer(name: "RacingSessionsModel", managedObjectModel: model)
         
         container.loadPersistentStores { (storeDescription, error) in

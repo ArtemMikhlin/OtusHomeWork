@@ -9,7 +9,7 @@ struct RacingSessionsTrackerApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.context)
-                .environmentObject(viewModel) // Добавляем viewModel в Environment
+                .environmentObject(viewModel)
         }
     }
 }
