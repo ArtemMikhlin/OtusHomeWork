@@ -12,15 +12,6 @@ struct ContentView: View {
                     .navigationTitle("Главная")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button(action: {
-                                withAnimation {
-                                    isMenuOpen.toggle()
-                                }
-                            }) {
-                                Image(systemName: "line.horizontal.3")
-                                    .imageScale(.large)
-                            }
                         }
                     }
                 
@@ -37,4 +28,3 @@ struct ContentView: View {
             }
         }
     }
-}

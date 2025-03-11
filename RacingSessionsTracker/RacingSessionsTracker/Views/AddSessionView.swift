@@ -11,12 +11,18 @@ struct AddSessionView: View {
     @State private var weatherData: WeatherData? = nil
     @State private var isLoading = false
     @State private var errorMessage: String? = nil
-    @State private var sessionDate = Date() // Добавляем поле для даты и времени
+    @State private var sessionDate = Date()
+    
+    // Для кастомного пикера
+    @State private var isAddingLapTime = false
+    @State private var currentLapMinutes = 0
+    @State private var currentLapSeconds = 0
     
     var body: some View {
         Form {
             Section(header: Text("Выберите трассу")) {
                 Picker("Трасса", selection: $selectedTrack) {
+                    Text("Не выбрано").tag(nil as TrackData?)
                     ForEach(TrackData.districts, id: \.self) { track in
                         Text(track.name).tag(track as TrackData?)
                     }
@@ -38,6 +44,9 @@ struct AddSessionView: View {
                 TextField("Модель автомобиля", text: $carModel)
                 TextField("Мощность (л/с)", text: $horsepower)
                     .keyboardType(.numberPad)
+                    .onChange(of: horsepower) { oldValue, newValue in
+                        horsepower = newValue.filter { $0.isNumber }
+                    }
             }
             
             Section(header: Text("Дата и время сессии")) {
@@ -46,11 +55,27 @@ struct AddSessionView: View {
             
             Section(header: Text("Время кругов")) {
                 ForEach(lapTimes.indices, id: \.self) { index in
-                    TextField("Круг \(index + 1)", value: $lapTimes[index], formatter: NumberFormatter())
-                        .keyboardType(.decimalPad)
+                    HStack {
+                        Text("Круг \(index + 1):")
+                        Spacer()
+                        Text("\(formatTime(lapTimes[index]))")
+                    }
                 }
-                Button("Добавить круг") {
-                    lapTimes.append(0.0)
+                
+                if isAddingLapTime {
+                    TimePickerView(minutes: $currentLapMinutes, seconds: $currentLapSeconds)
+                    
+                    Button("Сохранить круг") {
+                        let lapTime = Double(currentLapMinutes * 60 + currentLapSeconds)
+                        lapTimes.append(lapTime)
+                        isAddingLapTime = false
+                        currentLapMinutes = 0
+                        currentLapSeconds = 0
+                    }
+                } else {
+                    Button("Добавить круг") {
+                        isAddingLapTime = true
+                    }
                 }
             }
             
@@ -77,10 +102,17 @@ struct AddSessionView: View {
                 Button("Сохранить сессию") {
                     saveSession()
                 }
-                .disabled(selectedTrack == nil || carModel.isEmpty || horsepower.isEmpty || weatherData == nil)
+                .disabled(selectedTrack == nil || carModel.isEmpty || horsepower.isEmpty || weatherData == nil || lapTimes.isEmpty)
             }
         }
         .navigationTitle("Новая сессия")
+    }
+    
+    // Форматирование времени в минуты и секунды
+    private func formatTime(_ time: Double) -> String {
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
     
     private func fetchWeather() {
@@ -102,6 +134,12 @@ struct AddSessionView: View {
     private func saveSession() {
         guard let selectedTrack = selectedTrack,
               let weatherData = weatherData else { return }
+        
+        // Проверяем, что все круги имеют ненулевое время
+        guard !lapTimes.isEmpty, lapTimes.allSatisfy({ $0 > 0 }) else {
+            errorMessage = "Время кругов не может быть пустым или нулевым"
+            return
+        }
         
         let track = Track(context: viewContext)
         track.id = UUID()
@@ -129,7 +167,7 @@ struct AddSessionView: View {
         
         let session = Session(context: viewContext)
         session.id = UUID()
-        session.date = sessionDate // Сохраняем дату и время
+        session.date = sessionDate
         session.track = track
         session.car = car
         session.weather = weather
